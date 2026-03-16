@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Español Rápido — ספרדית מהירה</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e10;
+  --surface: #17171a;
+  --card: #1f1f23;
+  --border: #2d2d33;
+  --red: #c0392b;
+  --red-light: #e74c3c;
+  --gold: #d4a843;
+  --blue: #2980b9;
+  --green: #27ae60;
+  --text: #f0ede8;
+  --muted: #888;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Heebo', sans-serif;
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* SPLASH */
+#splash {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 9999;
+  gap: 10px;
+  transition: opacity 0.7s ease;
+}
+#splash .sp-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  color: var(--red);
+  line-height: 1;
+  animation: fadeUp 0.8s ease;
+}
+#splash .sp-sub {
+  font-size: 22px;
+  color: var(--muted);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+#splash .sp-he {
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 300;
+  margin-top: 8px;
+  animation: fadeUp 0.8s ease 0.4s both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+
+/* LAYOUT */
+#app { display:none; min-height:100vh; flex-direction:column; }
+#app.show { display:flex; }
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex; align-items: center; gap: 20px;
+  position: sticky; top: 0; z-index: 100;
+}
+.hdr-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--red);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.hdr-prog-wrap { flex: 1; }
+.hdr-prog-label { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.hdr-prog-bar { height: 4px; background: var(--border); border-radius: 2px; overflow:hidden; }
+.hdr-prog-fill { height:100%; background: var(--red); border-radius:2px; transition: width 0.5s ease; }
+.hdr-xp {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+main { display: flex; flex: 1; }
+
+/* SIDEBAR */
+aside {
+  width: 250px;
+  min-width: 250px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 20px 0;
+  overflow-y: auto;
+}
+.aside-title {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 18px 14px;
+}
+.ch-item {
+  padding: 12px 18px;
+  cursor: pointer;
+  border-right: 3px solid transparent;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s;
+}
+.ch-item:hover { background: var(--card); }
+.ch-item.active { background: var(--card); border-right-color: var(--red); }
+.ch-item.done .ch-ico { background: var(--green); }
+.ch-ico {
+  width: 34px; height: 34px;
+  background: var(--border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.ch-item.active .ch-ico { background: var(--red); }
+.ch-nm { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.ch-sb { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 36px 40px;
+  overflow-y: auto;
+  max-width: 860px;
+}
+
+/* HOME */
+.welcome-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+}
+.welcome-card h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.welcome-card p { color: var(--muted); line-height: 1.7; font-size: 15px; }
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+.home-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.home-card:hover { border-color: var(--red); transform: translateY(-3px); }
+.home-card.done { border-color: var(--green); }
+.hc-icon { font-size: 30px; margin-bottom: 10px; }
+.hc-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.hc-sub { font-size: 12px; color: var(--muted); }
+.hc-status { font-size: 12px; margin-top: 10px; color: var(--red); }
+.hc-status.done { color: var(--green); }
+
+/* CHAPTER HEADER */
+.ch-header { margin-bottom: 24px; }
+.ch-tag {
+  display: inline-block;
+  background: rgba(192,57,43,0.15);
+  color: var(--red-light);
+  border: 1px solid rgba(192,57,43,0.3);
+  border-radius: 20px;
+  font-size: 11px;
+  padding: 3px 12px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.ch-title { font-family: 'Playfair Display', serif; font-size: 38px; margin-bottom: 8px; }
+.ch-desc { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+/* BACK BTN */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--muted);
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  margin-bottom: 20px;
+  transition: all 0.2s;
+}
+.back-btn:hover { border-color: var(--muted); color: var(--text); }
+
+/* TABS */
+.tab-bar {
+  display: flex; gap: 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+.tab {
+  flex: 1; text-align: center;
+  padding: 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--text); }
+.tab.active {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* RULES */
+.rule-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  border-right: 4px solid var(--red);
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.rule-title { font-size: 14px; font-weight: 700; color: var(--red-light); margin-bottom: 7px; }
+.rule-body { font-size: 14px; color: #bbb; line-height: 1.7; }
+.rule-ex {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+.ex-es { font-size: 17px; font-weight: 600; color: var(--gold); }
+.ex-he { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.ex-pron { font-size: 12px; color: var(--blue); margin-top: 3px; font-style: italic; }
+
+/* VOCAB */
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+.vocab-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: default;
+}
+.vocab-card:hover { border-color: var(--gold); }
+.vc-es { font-size: 18px; font-weight: 700; color: var(--gold); }
+.vc-he { font-size: 13px; color: var(--muted); margin-top: 5px; }
+.vc-pron { font-size: 11px; color: var(--blue); margin-top: 4px; font-style: italic; }
+
+/* QUIZ */
+.q-prog {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 18px;
+  animation: slideIn 0.3s ease;
+}
+.q-type { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.q-text { font-size: 19px; font-weight: 500; margin-bottom: 22px; line-height: 1.5; }
+.options { display: grid; gap: 10px; }
+.opt {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 18px;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: right;
+  font-family: 'Heebo', sans-serif;
+  color: var(--text);
+  transition: all 0.15s;
+  width: 100%;
+}
+.opt:hover:not([disabled]) { border-color: var(--red); background: rgba(192,57,43,0.08); }
+.opt.correct { border-color: var(--green) !important; background: rgba(39,174,96,0.15) !important; color: var(--green) !important; }
+.opt.wrong   { border-color: var(--red) !important;   background: rgba(192,57,43,0.15) !important; color: #e07070 !important; }
+.fill-wrap { display: flex; flex-direction: column; gap: 10px; }
+.fill-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 17px;
+  color: var(--text);
+  font-family: 'Heebo', sans-serif;
+  direction: ltr;
+  text-align: left;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.fill-input:focus { border-color: var(--gold); }
+.fill-input.correct { border-color: var(--green); }
+.fill-input.wrong   { border-color: var(--red); }
+.feedback {
+  display: none;
+  margin-top: 14px;
+  padding: 13px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: rgba(39,174,96,0.12); color: #5dbb82; border: 1px solid rgba(39,174,96,0.4); }
+.feedback.wrong   { background: rgba(192,57,43,0.12); color: #e07070; border: 1px solid rgba(192,57,43,0.4); }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover { background: var(--red-light); transform: translateY(-1px); }
+.btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--muted); }
+.btn:disabled { opacity: 0.35; cursor: default; transform: none !important; }
+.btn-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+
+/* SUMMARY */
+.summary {
+  text-align: center;
+  padding: 20px 0 40px;
+  animation: slideIn 0.4s ease;
+}
+.sum-emoji { font-size: 72px; margin-bottom: 14px; }
+.sum-title { font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 10px; }
+.sum-score { font-size: 64px; font-weight: 700; color: var(--red); margin: 10px 0; }
+.sum-sub { color: var(--muted); font-size: 15px; margin-bottom: 36px; }
+.sum-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  text-align: right;
+  max-width: 560px;
+  margin: 0 auto 20px;
+}
+.sum-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.sum-row:last-child { border-bottom: none; }
+.sum-row .sl { color: var(--muted); }
+.sum-row .sv { font-weight: 700; }
+.sum-row .sv.gold { color: var(--gold); }
+.learned-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  text-align: right;
+  max-width: 560px;
+  margin: 0 auto 28px;
+}
+.learned-box h3 { font-size: 15px; color: var(--red-light); margin-bottom: 14px; }
+.learned-item {
+  font-size: 14px;
+  color: #bbb;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+}
+.learned-item:last-child { border-bottom: none; }
+.sum-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+
+/* CTA LESSON */
+.lesson-cta { text-align: center; margin-top: 28px; }
+
+@media (max-width: 700px) {
+  aside { display: none; }
+  .content { padding: 20px 16px; }
+  header { padding: 12px 16px; }
+  .hdr-prog-wrap { display: none; }
+  .ch-title { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">Español</div>
+  <div class="sp-sub">Rápido</div>
+  <div class="sp-he">ספרדית מהירה</div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="hdr-logo" onclick="goHome()">Español Rápido</div>
+    <div class="hdr-prog-wrap">
+      <div class="hdr-prog-label" id="progLabel">0 / 5 פרקים הושלמו</div>
+      <div class="hdr-prog-bar"><div class="hdr-prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+    <div class="hdr-xp" id="xpEl">⭐ 0 נק'</div>
+  </header>
+
+  <main>
+    <aside id="sidebar"></aside>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<script>
+// =====================================================
+// DATA
+// =====================================================
+const CHAPTERS = [
+  {
+    id: 'ph', icon: '🔤', name: 'הגייה ואלפבית', sub: '6 כללי הגייה', tag: 'יסודות',
+    title: 'הגייה ואלפבית',
+    desc: 'ספרדית נהגית כמו שנכתבת — ללמוד הגייה נכונה מההתחלה זה המפתח.',
+    rules: [
+      { t: 'H שקטה תמיד', b: 'האות H בספרדית אינה נהגית כלל — בניגוד לאנגלית.', ex: { es: 'Hola / Hotel / Hablar', he: 'שלום / מלון / לדבר', p: 'O-la / o-TEL / a-BLAR' }},
+      { t: 'J = ח עברית', b: 'האות J נהגית כמו ח עברית חזקה, לא כמו J אנגלית.', ex: { es: 'Joven / Trabajo / Ojo', he: 'צעיר / עבודה / עין', p: 'CHO-ven / tra-BA-cho / O-cho' }},
+      { t: 'LL = י', b: 'השילוב LL נהגה כמו Y/י בלטינו אמריקה (ובספרד — כמו ژ).', ex: { es: 'Lluvia / Calle / Llegar', he: 'גשם / רחוב / להגיע', p: 'YU-vya / KA-ye / ye-GAR' }},
+      { t: 'QU = K', b: 'QU לפני E ו-I נהגה כ-K בלבד. האות U שקטה.', ex: { es: 'Que / Quiero / Queso', he: 'מה / אני רוצה / גבינה', p: 'keh / KYER-o / KEH-so' }},
+      { t: 'V ≈ B', b: 'V ו-B נהגות כמעט אותו הדבר בספרדית — B רך.', ex: { es: 'Vivir / Vino / Bien', he: 'לחיות / יין / טוב', p: 'vi-VIR / VEE-no / BYEN' }},
+      { t: 'RR = ר מגולגל', b: 'RR נהגה כ-ר מגולגל חזק. R בודד בתחילת מילה — גם מגולגל.', ex: { es: 'Perro / Carro / Rojo', he: 'כלב / מכונית / אדום', p: 'PEH-rro / KA-rro / RO-cho' }},
+    ],
+    vocab: [
+      { es: 'Hola', he: 'שלום', p: 'O-la' }, { es: 'Adiós', he: 'להתראות', p: 'a-DYOS' },
+      { es: 'Gracias', he: 'תודה', p: 'GRA-syas' }, { es: 'Por favor', he: 'בבקשה', p: 'por fa-VOR' },
+      { es: 'Sí / No', he: 'כן / לא', p: 'see / no' }, { es: 'Buenos días', he: 'בוקר טוב', p: 'BWEH-nos DEE-as' },
+      { es: 'Buenas noches', he: 'לילה טוב', p: 'BWEH-nas NO-ches' }, { es: 'Lo siento', he: 'מצטער/ת', p: 'lo SYEN-to' },
+      { es: 'De nada', he: 'אין בעד מה', p: 'de NA-da' }, { es: 'Perdón', he: 'סליחה', p: 'per-DON' },
+    ],
+    quiz: [
+      { type: 'c', q: 'איך נהגית האות H בספרדית?', opts: ['כמו H אנגלית', 'שקטה לגמרי', 'כמו ח עברית', 'כמו כ רפה'], ans: 1 },
+      { type: 'c', q: 'J בספרדית נהגית כ-?', opts: ['J אנגלי', 'Y', 'ח עברית חזקה', 'שקטה'], ans: 2 },
+      { type: 'c', q: 'מה פירוש "Gracias"?', opts: ['שלום', 'בבקשה', 'תודה', 'סליחה'], ans: 2 },
+      { type: 'f', q: 'תרגם לספרדית: "שלום"', ans: 'hola', hint: 'H שקטה + o-la' },
+      { type: 'c', q: 'LL בספרדית נהגית כ-?', opts: ['L כפולה', 'Y/י', 'LL אנגלי', 'שקטה'], ans: 1 },
+      { type: 'f', q: 'תרגם לספרדית: "תודה"', ans: 'gracias', hint: 'GRA-syas' },
+      { type: 'c', q: 'QU לפני E נהגית כ-?', opts: ['KW', 'Q', 'K', 'KHU'], ans: 2 },
+      { type: 'c', q: 'מה פירוש "Lo siento"?', opts: ['אני שומע', 'מצטער/סליחה', 'אני מרגיש', 'אני רוצה'], ans: 1 },
+    ],
+    learned: ['H שקטה תמיד — Hola = "אולה"', 'J = ח חזקה, LL = י, RR = ר מגולגל', 'QU = K, V ≈ B רך', 'ברכות: Hola, Adiós, Gracias, Por favor, Lo siento']
+  },
+  {
+    id: 'noun', icon: '🏷️', name: 'שמות עצם ומין', sub: 'זכר/נקבה, el/la', tag: 'דקדוק',
+    title: 'שמות עצם ומין דקדוקי',
+    desc: 'כל שם עצם בספרדית הוא זכר או נקבה. הכלל פשוט — O = זכר, A = נקבה.',
+    rules: [
+      { t: 'O = זכר → el', b: 'מילים המסתיימות ב-O הן בדרך כלל זכר עם הגדרה el.', ex: { es: 'el libro / el coche / el año', he: 'הספר / המכונית / השנה', p: 'el LEE-bro / el KO-che / el A-nyo' }},
+      { t: 'A = נקבה → la', b: 'מילים המסתיימות ב-A הן בדרך כלל נקבה עם הגדרה la.', ex: { es: 'la casa / la mesa / la ciudad', he: 'הבית / השולחן / העיר', p: 'la KAH-sa / la MEH-sa / la syu-DAD' }},
+      { t: 'סיומות נקבה נוספות', b: 'סיומות -ción, -sión, -dad, -tad = תמיד נקבה.', ex: { es: 'la nación / la libertad', he: 'האומה / החירות', p: 'la na-SYON / la li-ber-TAD' }},
+      { t: 'יוצאים מהכלל חשובים', b: 'מילים על -ma ו-pa = זכר למרות A. el agua = מים (זכר, חריג).', ex: { es: 'el problema / el mapa / el agua', he: 'הבעיה / המפה / המים', p: 'el pro-BLE-ma / el MA-pa / el A-gwa' }},
+      { t: 'יחיד → רבים', b: 'מילה על תנועה: + S. מילה על עיצור: + ES.', ex: { es: 'libro→libros / ciudad→ciudades', he: 'ספר / ספרים — עיר / ערים', p: '' }},
+      { t: 'הגדרה ברבים: los / las', b: 'los = ה׳ זכר רבים. las = ה׳ נקבה רבים.', ex: { es: 'los libros / las casas', he: 'הספרים / הבתים', p: 'los LEE-bros / las KAH-sas' }},
+    ],
+    vocab: [
+      { es: 'el libro', he: 'הספר', p: 'el LEE-bro' }, { es: 'la casa', he: 'הבית', p: 'la KAH-sa' },
+      { es: 'la mesa', he: 'השולחן', p: 'la MEH-sa' }, { es: 'el coche', he: 'המכונית', p: 'el KO-che' },
+      { es: 'la ciudad', he: 'העיר', p: 'la syu-DAD' }, { es: 'el hombre', he: 'הגבר', p: 'el OM-bre' },
+      { es: 'la mujer', he: 'האישה', p: 'la mu-CHER' }, { es: 'el perro', he: 'הכלב', p: 'el PE-ro' },
+      { es: 'la gata', he: 'החתולה', p: 'la GA-ta' }, { es: 'el agua', he: 'המים (זכר!)', p: 'el A-gwa' },
+    ],
+    quiz: [
+      { type: 'c', q: 'מה הגדרה הנכונה של "casa" (בית)?', opts: ['el casa', 'la casa', 'lo casa', 'las casa'], ans: 1 },
+      { type: 'c', q: 'מה הרבים של "el libro"?', opts: ['el libros', 'los libro', 'los libros', 'las libros'], ans: 2 },
+      { type: 'c', q: 'מילה על "-ción" היא בדרך כלל?', opts: ['זכר', 'נקבה', 'תלוי', 'ניטרלי'], ans: 1 },
+      { type: 'f', q: 'תרגם: "הכלב" (el/la + perro)', ans: 'el perro', hint: 'perro מסתיים ב-O → זכר → el' },
+      { type: 'c', q: 'מה הרבים של "la ciudad"?', opts: ['la ciudads', 'los ciudades', 'las ciudades', 'las ciudads'], ans: 2 },
+      { type: 'c', q: 'למה "el agua" זכר למרות שמסתיים ב-A?', opts: ['טעות', 'חריג/יוצא מהכלל', 'A=זכר תמיד', 'זה נקבה בעצם'], ans: 1 },
+      { type: 'f', q: 'תרגם: "השולחנות" (רבים של la mesa)', ans: 'las mesas', hint: 'נקבה רבים = las + S' },
+      { type: 'c', q: '"el problema" — למה זכר?', opts: ['O בסוף', 'מילה על -ma = זכר', 'טעות', 'ניטרלי'], ans: 1 },
+    ],
+    learned: ['O → el (זכר), A → la (נקבה)', '-ción / -dad → נקבה, -ma / -pa → זכר', 'רבים: +S אחרי תנועה, +ES אחרי עיצור', 'los (זכר רבים) / las (נקבה רבים)', '10 שמות עצם חיוניים']
+  },
+  {
+    id: 'verb', icon: '⚡', name: 'פעלים בהווה', sub: 'SER, ESTAR ועוד', tag: 'דקדוק',
+    title: 'פעלים בהווה',
+    desc: 'שני פעלי "להיות" — SER ו-ESTAR — הם לב הספרדית. נלמד אותם ועוד 10 פעלים חיוניים.',
+    rules: [
+      { t: '3 קבוצות: AR / ER / IR', b: 'כל פועל שייך לאחת משלוש קבוצות לפי סיומת שם הפועל.', ex: { es: 'hablar (AR) / comer (ER) / vivir (IR)', he: 'לדבר / לאכול / לחיות', p: 'a-BLAR / ko-MER / vi-VIR' }},
+      { t: 'נטיית AR — hablar', b: 'yo hablo / tú hablas / él habla / nosotros hablamos / ellos hablan', ex: { es: 'Yo hablo español', he: 'אני מדבר ספרדית', p: 'yo A-blo es-pa-NYOL' }},
+      { t: 'נטיית ER — comer', b: 'yo como / tú comes / él come / nosotros comemos / ellos comen', ex: { es: 'Ellos comen pizza', he: 'הם אוכלים פיצה', p: 'E-yos KO-men' }},
+      { t: 'SER — זהות קבועה', b: 'מוצא, לאום, מקצוע, תכונות קבועות. נטייה: soy/eres/es/somos/son', ex: { es: 'Soy israelí / Él es médico', he: 'אני ישראלי / הוא רופא', p: 'soy is-ra-e-LEE / es ME-di-ko' }},
+      { t: 'ESTAR — מצב ומיקום', b: 'מיקום, מצב זמני ורגשי. נטייה: estoy/estás/está/estamos/están', ex: { es: 'Estoy en Tel Aviv / Estás cansado', he: 'אני בתל אביב / אתה עייף', p: 'es-TOY / es-TAS kan-SA-do' }},
+      { t: 'SER vs ESTAR — הכלל הפשוט', b: 'SER = קבוע וזהות (מי אתה). ESTAR = זמני ומיקום (איך אתה / איפה אתה).', ex: { es: 'Él es alto (SER) / Está enfermo hoy (ESTAR)', he: 'הוא גבוה (תמיד) / הוא חולה היום (זמני)', p: '' }},
+    ],
+    vocab: [
+      { es: 'hablar', he: 'לדבר', p: 'a-BLAR' }, { es: 'comer', he: 'לאכול', p: 'ko-MER' },
+      { es: 'vivir', he: 'לחיות', p: 'vi-VIR' }, { es: 'tener', he: 'לקחת / יש לי', p: 'te-NER' },
+      { es: 'querer', he: 'לרצות / לאהוב', p: 'ke-RER' }, { es: 'poder', he: 'לוכל', p: 'po-DER' },
+      { es: 'ir', he: 'ללכת', p: 'eer' }, { es: 'hacer', he: 'לעשות', p: 'a-SER' },
+      { es: 'saber', he: 'לדעת', p: 'sa-BER' }, { es: 'ver', he: 'לראות', p: 'ver' },
+    ],
+    quiz: [
+      { type: 'c', q: '"אני מדבר ספרדית" בספרדית?', opts: ['Yo hablas español', 'Yo hablo español', 'Yo hablar español', 'Yo hables español'], ans: 1 },
+      { type: 'c', q: 'מתי משתמשים ב-SER?', opts: ['מיקום', 'מצב זמני', 'זהות קבועה ומקצוע', 'עייפות'], ans: 2 },
+      { type: 'f', q: '"אני (SER) ישראלי" — ___ israelí', ans: 'soy', hint: 'SER לגוף ראשון: soy' },
+      { type: 'c', q: '"הוא עייף" — SER או ESTAR?', opts: ['Es cansado', 'Estar cansado', 'Está cansado', 'Son cansado'], ans: 2 },
+      { type: 'c', q: 'סיומת AR לגוף שלישי יחיד (él)?', opts: ['-o', '-as', '-a', '-amos'], ans: 2 },
+      { type: 'f', q: '"אנחנו אוכלים" — nosotros ___', ans: 'comemos', hint: 'comer → com + emos' },
+      { type: 'c', q: 'מה פירוש "querer"?', opts: ['לדעת', 'לוכל', 'לרצות/לאהוב', 'לראות'], ans: 2 },
+      { type: 'c', q: '"אנחנו בבית" — Nosotros ___ en casa', opts: ['somos', 'estamos', 'están', 'es'], ans: 1 },
+    ],
+    learned: ['3 קבוצות פעלים: AR / ER / IR', 'SER = זהות קבועה (soy/eres/es/somos/son)', 'ESTAR = מצב/מיקום זמני (estoy/estás/está...)', '10 פעלים חיוניים: hablar, comer, ir, tener, querer...']
+  },
+  {
+    id: 'num', icon: '🔢', name: 'מספרים וזמן', sub: '1–100, שעות, ימים', tag: 'אוצר מילים',
+    title: 'מספרים וזמן',
+    desc: 'מספרים, שעות, ימים ומילות זמן — כלים חיוניים לכל שיחה.',
+    rules: [
+      { t: 'מספרים 1–10', b: 'uno, dos, tres, cuatro, cinco, seis, siete, ocho, nueve, diez', ex: { es: 'Tengo dos hermanos', he: 'יש לי שני אחים', p: 'TEH-ngo dos er-MA-nos' }},
+      { t: 'מספרים 11–20', b: 'once, doce, trece, catorce, quince, dieciséis, diecisiete, dieciocho, diecinueve, veinte', ex: { es: 'Tengo quince años', he: 'אני בן/בת 15', p: 'TEH-ngo KIN-se A-nyos' }},
+      { t: 'עשרות', b: 'veinte(20), treinta(30), cuarenta(40), cincuenta(50), sesenta(60), setenta(70), ochenta(80), noventa(90), cien(100)', ex: { es: 'Tengo treinta años', he: 'אני בן/בת 30', p: 'TREYN-ta' }},
+      { t: '¿Qué hora es? — מה השעה?', b: 'Es la una = שעה 1. Son las + מספר = שאר. y media = וחצי. y cuarto = ורבע.', ex: { es: 'Son las ocho y media', he: 'שמונה וחצי', p: 'son las O-cho ee MEH-dya' }},
+      { t: 'ימי השבוע', b: 'lunes(ב׳), martes(ג׳), miércoles(ד׳), jueves(ה׳), viernes(ו׳), sábado(ש׳), domingo(א׳)', ex: { es: 'Hoy es viernes', he: 'היום יום שישי', p: 'oy es VYER-nes' }},
+    ],
+    vocab: [
+      { es: 'uno / dos / tres', he: 'אחד / שניים / שלושה', p: 'OO-no / dos / tres' },
+      { es: 'diez / veinte / cien', he: 'עשר / עשרים / מאה', p: 'dyez / BEYN-te / syen' },
+      { es: 'hoy', he: 'היום', p: 'oy' }, { es: 'mañana', he: 'מחר / בוקר', p: 'ma-NYA-na' },
+      { es: 'ayer', he: 'אתמול', p: 'a-YER' }, { es: 'ahora', he: 'עכשיו', p: 'a-O-ra' },
+      { es: 'lunes', he: 'יום שני', p: 'LOO-nes' }, { es: 'viernes', he: 'יום שישי', p: 'VYER-nes' },
+      { es: 'el año', he: 'השנה', p: 'el A-nyo' }, { es: 'el mes', he: 'החודש', p: 'el mes' },
+    ],
+    quiz: [
+      { type: 'c', q: 'מה "חמש" בספרדית?', opts: ['cuatro', 'seis', 'cinco', 'siete'], ans: 2 },
+      { type: 'f', q: 'תרגם: "שלושים"', ans: 'treinta', hint: 'עשרות: veinte, treinta, cuarenta...' },
+      { type: 'c', q: '"זה שעה אחת" בספרדית?', opts: ['Son las una', 'Es la una', 'Es un', 'Son uno'], ans: 1 },
+      { type: 'c', q: 'מה "מחר" בספרדית?', opts: ['ayer', 'ahora', 'hoy', 'mañana'], ans: 3 },
+      { type: 'c', q: 'מה "יום שישי"?', opts: ['jueves', 'viernes', 'sábado', 'lunes'], ans: 1 },
+      { type: 'f', q: 'תרגם: "עכשיו"', ans: 'ahora', hint: 'a-O-ra' },
+      { type: 'c', q: '"שמונה וחצי" = Son las ocho y ___', opts: ['mitad', 'medio', 'media', 'meta'], ans: 2 },
+      { type: 'c', q: 'מה "מאה" בספרדית?', opts: ['mil', 'ciento', 'cien', 'cienk'], ans: 2 },
+    ],
+    learned: ['מספרים 0–100', '¿Qué hora es? → Es la una / Son las + מספר', 'y media (וחצי) / y cuarto (ורבע)', 'ימי השבוע: lunes עד domingo', 'hoy / mañana / ayer / ahora']
+  },
+  {
+    id: 'sent', icon: '💬', name: 'משפטים ושיחה', sub: 'שאלות, שלילה, הכרות', tag: 'תקשורת',
+    title: 'לבנות משפטים',
+    desc: 'מחברים הכל — שאלות, שלילה ומשפטים לשיחה אמיתית ראשונה.',
+    rules: [
+      { t: '7 מילות שאלה', b: '¿Qué?=מה, ¿Quién?=מי, ¿Dónde?=איפה, ¿Cuándo?=מתי, ¿Cómo?=איך, ¿Por qué?=למה, ¿Cuánto?=כמה', ex: { es: '¿Dónde estás? / ¿Qué haces?', he: 'איפה אתה? / מה אתה עושה?', p: 'DON-de es-TAS / keh A-ses' }},
+      { t: 'שלילה = NO לפני הפועל', b: 'NO מגיע תמיד לפני הפועל — פשוט וקבוע.', ex: { es: 'No hablo francés / No tengo hambre', he: 'אני לא מדבר צרפתית / אני לא רעב', p: 'no A-blo / no TEH-ngo AM-bre' }},
+      { t: 'שלילה כפולה — מותרת!', b: 'בשונה מאנגלית, שלילה כפולה נדרשת ונכונה בספרדית.', ex: { es: 'No tengo nada / No hay nadie', he: 'אין לי כלום / אין אף אחד', p: 'no TEH-ngo NA-da' }},
+      { t: 'הכרות: שם', b: '¿Cómo te llamas? = מה שמך? / Me llamo... = שמי...', ex: { es: '¿Cómo te llamas? — Me llamo David', he: 'מה שמך? — שמי דוד', p: 'KO-mo te YA-mas / me YA-mo' }},
+      { t: 'הכרות: מוצא', b: '¿De dónde eres? = מאיפה אתה? / Soy de... = אני מ-...', ex: { es: 'Soy de Israel, de Tel Aviv', he: 'אני מישראל, מתל אביב', p: 'soy de is-ra-EL' }},
+      { t: '¿Cómo estás? — מה שלומך?', b: 'Muy bien (מצוין) / Bien (טוב) / Más o menos (בינוני) / Mal (רע)', ex: { es: '— ¿Cómo estás? — Muy bien, gracias', he: 'מה שלומך? — מצוין, תודה', p: 'KO-mo es-TAS / mwee BYEN' }},
+    ],
+    vocab: [
+      { es: '¿Qué?', he: 'מה?', p: 'keh' }, { es: '¿Dónde?', he: 'איפה?', p: 'DON-de' },
+      { es: '¿Cómo?', he: 'איך?', p: 'KO-mo' }, { es: 'Me llamo', he: 'שמי', p: 'me YA-mo' },
+      { es: 'Muy bien', he: 'מצוין / טוב מאוד', p: 'mwee BYEN' }, { es: 'también', he: 'גם', p: 'tam-BYEN' },
+      { es: 'pero', he: 'אבל', p: 'PE-ro' }, { es: 'porque', he: 'כי / כיוון ש-', p: 'por-KEH' },
+      { es: 'nada', he: 'כלום', p: 'NA-da' }, { es: 'todo', he: 'הכל', p: 'TO-do' },
+    ],
+    quiz: [
+      { type: 'c', q: '"איפה אתה?" בספרדית?', opts: ['¿Qué estás?', '¿Cómo estás?', '¿Dónde estás?', '¿Cuándo estás?'], ans: 2 },
+      { type: 'f', q: '"אני לא מדבר ספרדית" — No ___ español', ans: 'hablo', hint: 'hablar → hablo (גוף ראשון)' },
+      { type: 'c', q: '"מה שמך?" בספרדית?', opts: ['¿Cómo estás?', '¿Cómo te llamas?', '¿Quién eres?', '¿De dónde eres?'], ans: 1 },
+      { type: 'c', q: '"שמי" בספרדית?', opts: ['Soy llamo', 'Mi nombre soy', 'Me llamo', 'Llamo me'], ans: 2 },
+      { type: 'c', q: '"מצוין" (תשובה ל-¿Cómo estás?)?', opts: ['Más o menos', 'Mal', 'Muy bien', 'Regular'], ans: 2 },
+      { type: 'f', q: '"גם אני" — ___ yo', ans: 'también', hint: 'tam-BYEN' },
+      { type: 'c', q: '"כלום" בספרדית?', opts: ['todo', 'algo', 'nada', 'mucho'], ans: 2 },
+      { type: 'c', q: 'NO בשלילה מגיע ___?', opts: ['אחרי הפועל', 'לפני הפועל', 'בסוף המשפט', 'לפני הנושא'], ans: 1 },
+    ],
+    learned: ['7 מילות שאלה: Qué, Quién, Dónde, Cuándo, Cómo, Por qué, Cuánto', 'שלילה: NO לפני הפועל', 'הכרות: ¿Cómo te llamas? / Me llamo... / Soy de...', 'מילות חיבור: también, pero, porque, nada, todo']
+  }
+];
+
+// =====================================================
+// STATE
+// =====================================================
+let S = { xp: 0, done: [], cur: null, view: 'home', tab: 'lesson', qa: [], qi: 0 };
+
+function saveState() {
+  try { localStorage.setItem('esrapido_v1', JSON.stringify(S)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const d = JSON.parse(localStorage.getItem('esrapido_v1') || 'null');
+    if (d && typeof d.xp === 'number') S = d;
+  } catch(e) {}
+}
+loadState();
+
+// =====================================================
+// HEADER & SIDEBAR
+// =====================================================
+function updateHeader() {
+  document.getElementById('xpEl').textContent = '⭐ ' + S.xp + ' נק\'';
+  const pct = (S.done.length / CHAPTERS.length) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = S.done.length + ' / ' + CHAPTERS.length + ' פרקים הושלמו';
+}
+
+function renderSidebar() {
+  const html = CHAPTERS.map(ch => {
+    const done = S.done.includes(ch.id);
+    const active = S.cur === ch.id;
+    return `<div class="ch-item ${active ? 'active' : ''} ${done ? 'done' : ''}" onclick="openChapter('${ch.id}')">
+      <div class="ch-ico">${done ? '✓' : ch.icon}</div>
+      <div>
+        <div class="ch-nm">${ch.name}</div>
+        <div class="ch-sb">${ch.sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('sidebar').innerHTML = '<div class="aside-title">פרקים</div>' + html;
+}
+
+function setContent(html) {
+  document.getElementById('content').innerHTML = html;
+  updateHeader();
+  renderSidebar();
+}
+
+// =====================================================
+// HOME
+// =====================================================
+function goHome() {
+  S.cur = null; S.view = 'home';
+  saveState();
+  const cards = CHAPTERS.map(ch => {
+    const done = S.done.includes(ch.id);
+    return `<div class="home-card ${done ? 'done' : ''}" onclick="openChapter('${ch.id}')">
+      <div class="hc-icon">${ch.icon}</div>
+      <div class="hc-name">${ch.name}</div>
+      <div class="hc-sub">${ch.sub}</div>
+      <div class="hc-status ${done ? 'done' : ''}">${done ? '✓ הושלם' : '▶ התחל'}</div>
+    </div>`;
+  }).join('');
+  setContent(`
+    <div class="welcome-card">
+      <h1>ברוכות הבאות ל-Español Rápido 🇪🇸</h1>
+      <p>קורס ספרדית מהיר ומובנה בעברית. 5 פרקים עם שיעורים, אוצר מילים ובחנים — מתאים לאדם שקולט מהר ורוצה ספרדית שימושית.</p>
+      <p style="margin-top:10px;font-size:14px">⭐ ${S.xp} נקודות | ✅ ${S.done.length}/${CHAPTERS.length} פרקים הושלמו</p>
+    </div>
+    <div class="home-grid">${cards}</div>
+  `);
+}
+
+// =====================================================
+// CHAPTER
+// =====================================================
+function openChapter(id) {
+  S.cur = id; S.tab = 'lesson'; S.qa = []; S.qi = 0; S.view = 'lesson';
+  saveState();
+  renderChapter();
+}
+
+function renderChapter() {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  const tabs = [['lesson','📖 שיעור'],['vocab','🃏 מילים'],['quiz','✏️ בחן']].map(([t, label]) =>
+    `<div class="tab ${S.tab === t ? 'active' : ''}" onclick="setTab('${t}')">${label}</div>`
+  ).join('');
+
+  let body = '';
+  if (S.tab === 'lesson') body = lessonHTML(ch);
+  else if (S.tab === 'vocab') body = vocabHTML(ch);
+  else body = quizHTML(ch);
+
+  setContent(`
+    <div class="back-btn" onclick="goHome()">← חזרה לבית</div>
+    <div class="ch-header">
+      <div class="ch-tag">${ch.tag}</div>
+      <div class="ch-title">${ch.title}</div>
+      <div class="ch-desc">${ch.desc}</div>
+    </div>
+    <div class="tab-bar">${tabs}</div>
+    <div id="tabBody">${body}</div>
+  `);
+}
+
+function setTab(t) {
+  S.tab = t;
+  if (t === 'quiz') { S.qa = []; S.qi = 0; S.view = 'quiz'; }
+  saveState();
+  renderChapter();
+}
+
+// =====================================================
+// LESSON
+// =====================================================
+function lessonHTML(ch) {
+  const rules = ch.rules.map(r => `
+    <div class="rule-card">
+      <div class="rule-title">${r.t}</div>
+      <div class="rule-body">${r.b}</div>
+      ${r.ex ? `<div class="rule-ex">
+        <div class="ex-es">${r.ex.es}</div>
+        ${r.ex.he ? `<div class="ex-he">${r.ex.he}</div>` : ''}
+        ${r.ex.p ? `<div class="ex-pron">🔊 ${r.ex.p}</div>` : ''}
+      </div>` : ''}
+    </div>
+  `).join('');
+  return rules + `<div class="lesson-cta"><button class="btn btn-primary" onclick="setTab('quiz')">✏️ עבור לבחן את עצמך</button></div>`;
+}
+
+// =====================================================
+// VOCAB
+// =====================================================
+function vocabHTML(ch) {
+  const cards = ch.vocab.map(v => `
+    <div class="vocab-card">
+      <div class="vc-es">${v.es}</div>
+      <div class="vc-he">${v.he}</div>
+      <div class="vc-pron">🔊 ${v.p}</div>
+    </div>
+  `).join('');
+  return `<div class="vocab-grid">${cards}</div>
+    <div class="lesson-cta"><button class="btn btn-primary" onclick="setTab('quiz')" style="margin-top:20px">✏️ עבור לבחן את עצמך</button></div>`;
+}
+
+// =====================================================
+// QUIZ
+// =====================================================
+function quizHTML(ch) {
+  if (S.view === 'summary') return summaryHTML(ch);
+  const q = ch.quiz[S.qi];
+  const ans = S.qa[S.qi];
+  const total = ch.quiz.length;
+
+  // question body
+  let qBody = '';
+  if (q.type === 'c') {
+    const opts = q.opts.map((o, i) => {
+      let cls = 'opt';
+      if (ans !== undefined) {
+        cls += ' dis';
+        if (i === q.ans) cls += ' correct';
+        else if (i === ans && i !== q.ans) cls += ' wrong';
+      }
+      return `<button class="${cls}" onclick="answerChoice(${i})" ${ans !== undefined ? 'disabled' : ''}>${o}</button>`;
+    }).join('');
+    qBody = `<div class="options">${opts}</div>`;
+  } else {
+    const fval = ans !== undefined ? ans : '';
+    const fcls = ans !== undefined ? (ans.trim().toLowerCase() === q.ans.toLowerCase() ? 'correct' : 'wrong') : '';
+    qBody = `<div class="fill-wrap">
+      <input class="fill-input ${fcls}" id="fillInput" type="text" placeholder="כתוב כאן בספרדית..." value="${fval}" ${ans !== undefined ? 'disabled' : ''} dir="ltr" onkeydown="if(event.key==='Enter')answerFill()">
+      ${ans === undefined ? `<button class="btn btn-primary" onclick="answerFill()" style="align-self:flex-start">בדוק ✓</button>` : ''}
+    </div>`;
+  }
+
+  // feedback
+  let fb = '';
+  if (ans !== undefined) {
+    const ok = q.type === 'c' ? ans === q.ans : ans.trim().toLowerCase() === q.ans.toLowerCase();
+    const msg = ok ? '✓ נכון מאוד!' : `✗ לא בדיוק. ${q.type === 'f' ? 'התשובה: <strong>' + q.ans + '</strong>. ' : ''}${q.hint ? '💡 ' + q.hint : ''}`;
+    fb = `<div class="feedback show ${ok ? 'correct' : 'wrong'}">${msg}</div>`;
+  }
+
+  // nav buttons
+  let nav = '';
+  if (ans !== undefined && S.qi < total - 1)
+    nav += `<button class="btn btn-primary" onclick="nextQ()">הבא →</button>`;
+  if (ans !== undefined && S.qi === total - 1)
+    nav += `<button class="btn btn-primary" onclick="doSummary()">סיום וסיכום 🏆</button>`;
+  if (S.qi > 0)
+    nav += `<button class="btn btn-secondary" onclick="prevQ()">← הקודם</button>`;
+
+  return `
+    <div class="q-prog">שאלה ${S.qi + 1} מתוך ${total}</div>
+    <div class="q-card">
+      <div class="q-type">${q.type === 'c' ? 'בחר תשובה' : 'מלא את החסר'}</div>
+      <div class="q-text">${q.q}</div>
+      ${qBody}
+      ${fb}
+    </div>
+    <div class="btn-row">${nav}</div>
+  `;
+}
+
+function answerChoice(i) {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  if (S.qa[S.qi] !== undefined) return;
+  S.qa[S.qi] = i;
+  if (i === ch.quiz[S.qi].ans) { S.xp += 10; }
+  saveState();
+  document.getElementById('tabBody').innerHTML = quizHTML(ch);
+}
+
+function answerFill() {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  const inp = document.getElementById('fillInput');
+  if (!inp || !inp.value.trim()) return;
+  S.qa[S.qi] = inp.value.trim();
+  if (inp.value.trim().toLowerCase() === ch.quiz[S.qi].ans.toLowerCase()) { S.xp += 10; }
+  saveState();
+  document.getElementById('tabBody').innerHTML = quizHTML(ch);
+}
+
+function nextQ() {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  S.qi++;
+  saveState();
+  document.getElementById('tabBody').innerHTML = quizHTML(ch);
+}
+
+function prevQ() {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  S.qi--;
+  saveState();
+  document.getElementById('tabBody').innerHTML = quizHTML(ch);
+}
+
+// =====================================================
+// SUMMARY
+// =====================================================
+function doSummary() {
+  const ch = CHAPTERS.find(c => c.id === S.cur);
+  S.view = 'summary';
+  if (!S.done.includes(S.cur)) { S.done.push(S.cur); S.xp += 50; }
+  saveState();
+  updateHeader();
+  renderSidebar();
+  document.getElementById('tabBody').innerHTML = summaryHTML(ch);
+}
+
+function summaryHTML(ch) {
+  let correct = 0;
+  ch.quiz.forEach((q, i) => {
+    const a = S.qa[i];
+    if (q.type === 'c' && a === q.ans) correct++;
+    else if (q.type === 'f' && a && a.trim().toLowerCase() === q.ans.toLowerCase()) correct++;
+  });
+  const pct = Math.round(correct / ch.quiz.length * 100);
+  const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+  const msg = pct >= 80 ? 'מצוין! שלטת בחומר!' : pct >= 60 ? 'יפה מאוד! עוד קצת ותשלטי בזה' : 'חזרי על השיעור ונסי שוב — את יכולה!';
+  const nextCh = CHAPTERS[CHAPTERS.findIndex(c => c.id === ch.id) + 1];
+
+  const learnedItems = ch.learned.map(l => `<div class="learned-item">• ${l}</div>`).join('');
+  const nextBtn = nextCh
+    ? `<button class="btn btn-primary" onclick="openChapter('${nextCh.id}')">הפרק הבא: ${nextCh.name} →</button>`
+    : `<button class="btn btn-primary" onclick="goHome()">🏠 סיום הקורס!</button>`;
+
+  return `
+    <div class="summary">
+      <div class="sum-emoji">${emoji}</div>
+      <div class="sum-title">סיכום פרק</div>
+      <div class="sum-score">${pct}%</div>
+      <div class="sum-sub">${correct} מתוך ${ch.quiz.length} תשובות נכונות — ${msg}</div>
+      <div class="sum-box">
+        <div class="sum-row"><span class="sl">תשובות נכונות</span><span class="sv">${correct}/${ch.quiz.length}</span></div>
+        <div class="sum-row"><span class="sl">נקודות שהרווחת</span><span class="sv gold">+${correct * 10} ⭐</span></div>
+        <div class="sum-row"><span class="sl">בונוס השלמת פרק</span><span class="sv gold">+50 ⭐</span></div>
+        <div class="sum-row"><span class="sl">סה"כ נקודות</span><span class="sv gold">${S.xp} ⭐</span></div>
+      </div>
+      <div class="learned-box">
+        <h3>✅ מה למדת בפרק זה</h3>
+        ${learnedItems}
+      </div>
+      <div class="sum-btns">
+        <button class="btn btn-secondary" onclick="setTab('quiz')">🔄 נסי שוב</button>
+        <button class="btn btn-secondary" onclick="setTab('lesson')">📖 חזרה לשיעור</button>
+        ${nextBtn}
+      </div>
+    </div>
+  `;
+}
+
+// =====================================================
+// INIT
+// =====================================================
+setTimeout(() => {
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    goHome();
+  }, 700);
+}, 2000);
+</script>
+</body>
+</html>
